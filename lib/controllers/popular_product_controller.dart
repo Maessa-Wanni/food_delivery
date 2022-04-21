@@ -71,16 +71,34 @@ class PopularProductController extends GetxController {
     }
   }
 
-  void initProduct(CartController cart){
+  void initProduct(ProductModel product,CartController cart){
     _quantity = 0;
     _inCartItems = 0;
-
     _cart = cart;
+    var exist = false;
+    exist = _cart.existInCart(product);
 
     //get from storage _inCartItem = 3
+
+    if(exist){
+      _inCartItems = _cart.getQuantity(product);
+    }
   }
 
-  void addItem(ProductModel product){
-    _cart.addItem(product, _quantity);
+  void  addItem(ProductModel product){
+    if(quantity>0) {
+      _cart.addItem(product, _quantity);
+      _quantity = 0;
+    }
+    else{
+      Get.snackbar(
+        "Item Count",
+        "You should at least add item in the cart !",
+        backgroundColor: AppColors.mainColor,
+        colorText: Colors.white,
+      );
+    }
   }
+
+
 }

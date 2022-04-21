@@ -10,18 +10,54 @@ class CartController extends GetxController {
 
   Map<int, CartModel> _items = {};
 
+  Map<int, CartModel> get items => _items;
+
   void addItem(ProductModel product, int quantity) {
-    _items.putIfAbsent(product.id!, () {
-      print("add item to cart");
-      return CartModel(
-        id: product.id,
-        img: product.img,
-        name: product.name,
-        price: product.price,
-        quantity: quantity,
-        isExit: true,
-        time: DateTime.now().toString(),
-      );
-    });
+    if (_items.containsKey(product.id!)) {
+      _items.update(product.id!, (value) {
+        return CartModel(
+          id: value.id,
+          img: value.img,
+          name: value.name,
+          price: value.price,
+          quantity: quantity + value.quantity!,
+          isExit: true,
+          time: DateTime.now().toString(),
+        );
+      });
+    } else {
+      _items.putIfAbsent(product.id!, () {
+        print("add item to cart");
+        return CartModel(
+          id: product.id,
+          img: product.img,
+          name: product.name,
+          price: product.price,
+          quantity: quantity,
+          isExit: true,
+          time: DateTime.now().toString(),
+        );
+      });
+    }
+  }
+
+  bool existInCart(ProductModel product) {
+    if (_items.containsKey(product.id)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getQuantity(ProductModel product) {
+    var quantity = 0;
+    if (_items.containsKey(product.id)) {
+      _items.forEach((key, value) {
+        if (key == product.id) {
+          quantity = value.quantity!;
+        }
+      });
+    }
+    return quantity;
   }
 }
